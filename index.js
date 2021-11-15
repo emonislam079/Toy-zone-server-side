@@ -51,7 +51,12 @@ async function run() {
             const cursor = orderCollection.find(query);
             const order = await cursor.toArray();
             res.json(order);
-            console.log(order);
+            
+        })
+        app.get('/allOrders', async(req, res) => {
+            const cursor = orderCollection.find({});
+            const orders = await cursor.toArray();
+            res.send(orders);
         })
 
         // GET REVIEW API
@@ -79,7 +84,7 @@ async function run() {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
             res.json(result);
-            console.log(result);
+            
         })
 
         app.get('/users/:email', async(req, res) => {
@@ -98,7 +103,7 @@ async function run() {
             const user = req.body;
             const result = await usersCollection.insertOne(user);
             res.json(result);
-            console.log(result);
+            
         })
 
         // UPSERT USER DATA
@@ -111,24 +116,15 @@ async function run() {
             res.json(result);
         })
 
-        // app.put('/users/admin',  async(req, res) => {
-        //     const user = req.body;
-        //     const requester = req.decodedEmail;
-        //     if(requester){
-        //         const requesterAccount = await usersCollection.findOne({email: requester})
-        //         if(requesterAccount.role === 'admin'){
-        //             const filter = {email: user.email};
-        //     const updateDoc = {$set: {role: 'admin'}}
-        //     const result = await usersCollection.updateOne(filter, updateDoc);
-        //     res.json(result);
-        //         }
-        //     }
-        //     else{
-        //         res.status(403).json({message: 'You do not have access to make admin'})
-        //     }
+        app.put('/users/admin',  async(req, res) => {
+            const user = req.body;
+            const requester = req.decodedEmail;
+            const filter = {email: user.email};
+            const updateDoc = {$set: {role: 'admin'}}
+            const result = await usersCollection.updateOne(filter, updateDoc);
+            res.json(result);
             
-            
-        // })
+        })
 
         // DELETE PRODUCTS API
         // app.delete('/products/:id', async(req, res) => {
@@ -138,6 +134,7 @@ async function run() {
         //    res.json(result);
           
         // })
+        
     }
     finally{
         // await client.close();
